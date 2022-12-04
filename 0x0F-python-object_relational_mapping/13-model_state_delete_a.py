@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-'''script for task 12'''
+'''script for task 13'''
 
 from model_state import State, Base
 from sqlalchemy import create_engine
@@ -19,8 +19,12 @@ if __name__ == '__main__':
                            pool_pre_ping=True)
     Session = sessionmaker(bind=engine)
     local_session = Session()
-    state = local_session.query(State).filter(State.id == 2).first()
-    state.name = 'New Mexico'
+    states = local_session.query(State).filter(
+                           State.name.op('regexp')('.*a+.*')
+                           )
+
+    for state in states:
+        local_session.delete(state)
     local_session.commit()
 
     local_session.close()
